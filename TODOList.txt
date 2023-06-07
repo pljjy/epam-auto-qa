@@ -1,5 +1,8 @@
-1) do the text test at https://www.epam.com/services/engineering/iot
-2) parallel tests
-3) email send test
-4) api test
-5) make regions test(like on https://www.epam.com/)
+- do the text test at https://www.epam.com/services/engineering/iot
+- email send test
+- make regions test(like on https://www.epam.com/)
+- do something w/ obsolete methods
+- add ExtentTest extension to color different pass() options (object.Debug(), object.Fatal(), etc.)
+- add readme
+
+- api test(if it exists & public)

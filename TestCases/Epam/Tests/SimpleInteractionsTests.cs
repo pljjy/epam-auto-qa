@@ -37,4 +37,10 @@ internal class SimpleInteractionsTests : BaseTest
         tests.ButtonSlides(btnSlides);
     }
 
+    [Test]
+    public void SectionWrapperTest()
+    {
+        tests = new Methods(driver, report, "https://www.epam.com/services/engineering/iot");
+        tests.SectionWrapper(sectionWrapper, "https://www.epam.com/services/engineering/iot");
+    }
 }

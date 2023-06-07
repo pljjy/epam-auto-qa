@@ -1,4 +1,5 @@
-﻿using AventStack.ExtentReports;
+﻿using System.Diagnostics;
+using AventStack.ExtentReports;
 using Epam.Source.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -15,6 +16,12 @@ public class Methods
     private IWebDriver driver = null!;
     private ExtentTest report = null!;
 
+    /// <summary>
+    /// Initializes variables, goes to the desired site and removes the cookies window
+    /// </summary>
+    /// <param name="_driver"></param>
+    /// <param name="_report"></param>
+    /// <param name="url"></param>
     public Methods(IWebDriver _driver, ExtentTest _report, string url)
     {
         try
@@ -27,7 +34,7 @@ public class Methods
                 By.XPath("//div[@id = 'onetrust-banner-sdk'][@tabindex = '0'][contains(@class, 'bottom')]"));
             var js = driver.JavaScript();
             js.ExecuteScript("return arguments[0].remove();", cookieWindow);
-            // most tests get their clicks intercepted because of the cookie window, the fastest way to solve this is to just remove it from DOM 
+            // most tests get their clicks intercepted because of the cookies window, the fastest way to solve this is to just remove it from DOM 
         }
         catch (Exception e)
         {
@@ -43,16 +50,66 @@ public class Methods
 
     #region Methods
 
-
-    ///////////////////////////////////////////////////////////
-
-    public void CategoriesSwitcher(By _mainDivLocator)
+    /// <summary>
+    /// Test for section wrapper
+    /// Example of section wrapper: https://www.epam.com/services/engineering/iot
+    /// </summary>
+    /// <param name="_mainDiv">
+    /// should end with /div[contains(@class, 'section__wrapper')]/child::accordion
+    /// </param>
+    /// <param name="url">to show url where accordion with an index doesn't work</param>
+    public void SectionWrapper(By _mainDiv, string url)
     {
         try
         {
-            var mainDiv = driver.FindElement(_mainDivLocator);
+            var elements = driver.FindElement(_mainDiv)
+                        .FindElements(By.XPath(".//child::div[@class='accordion']"));
+            driver.ScrollElementIntoView(elements[(elements.Count / 2)]);
+
+            report.Debug("scrolled", driver.CaptureScreenshot());
+            report.Debug("elements found " + elements.Count);
+
+            for (var index = 0; index < elements.Count; index++)
+            {
+                var ele = elements[index];
+                driver.ScrollElementIntoView(ele);
+                ele.Click();
+                //report.Debug($"element {index} clicked", driver.CaptureScreenshot());
+                Thread.Sleep(100);
+
+                var textEle = ele.FindElement(By.XPath(".//div/div[@class='accordion-23__flexbox']"));
+                if (!ele.Displayed)
+                {
+                    ThrowErrorAndFailTest($"Accordion {index} doesn't work on page {url}");
+                }
+                // if it fails, it throws an error so code below won't execute
+                report.Debug($"Accordion {index} works");
+            }
+        }
+        catch (Exception e)
+        {
+            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+                         $"{e.StackTrace?.Replace("\n", "<br/>")}");
+            Assert.Fail(e.Message);
+        }
+
+    }
+
+
+    /// <summary>
+    /// Test of categories switcher
+    /// Example of categories switcher: https://www.epam.com/services/strategy/optimizing-for-growth
+    /// </summary>
+    /// <param name="_mainDiv">
+    /// should be a div with 'categories-switcher-container' in class
+    /// </param>
+    public void CategoriesSwitcher(By _mainDiv)
+    {
+        try
+        {
+            var mainDiv = driver.FindElement(_mainDiv);
             driver.ScrollElementIntoView(mainDiv);
-            
+
             var _clickableTabs = mainDiv.FindElements(By.XPath(
                 ".//div[@class = 'categories-switcher-left-part']/div[@role = 'tablist']/child::div[@role = 'tab']"));
             var _textDivs = mainDiv.FindElements(By.XPath(
@@ -64,9 +121,7 @@ public class Methods
 
                 int index = _clickableTabs.IndexOf(_tab);
                 report.Debug($"Tab {index + 1} clicked", driver.CaptureScreenshot());
-
                 bool shownMainText = _textDivs[index].Displayed;
-                // you can't use /text() in the end because it will throw invalid selector exception
 
                 if (!shownMainText)
                 {
@@ -85,100 +140,20 @@ public class Methods
         }
     }
 
-    ///////////////////////////////////////////////////////////
 
-    public void SideMenu(By buttonSideMenuLocator, By _liSideMenuLocator)
+    /// <summary>
+    /// Test of buttons on elements with slides
+    /// Example of such element: https://www.epam.com/services/engineering/mach
+    /// </summary>
+    /// <param name="_mainArrowsDiv">
+    /// the class of div should contain 'slider__navigation'
+    /// </param>
+    public void ButtonSlides(By _mainArrowsDiv)
     {
         try
         {
-            var _button = driver.FindElement(buttonSideMenuLocator);
-            if (_button.GetAttribute("aria-expanded").Equals("false")) _button.Click();
-
-            var _listOfSecondItems = driver.FindElements(_liSideMenuLocator);
-            foreach (var liSecond in _listOfSecondItems)
-            {
-                int indexSecond = _listOfSecondItems.IndexOf(liSecond) + 1;
-                liSecond.Click();
-
-                var _listOfThirdItems = liSecond.FindElements(By.XPath(".//ul[@class = 'hamburger-menu__sub-list']" +
-                                                                       "/child::li[contains(@class, 'third-level-item--collapsed')]"));
-                foreach (var thirdLi in _listOfThirdItems)
-                {
-                    int indexThird = _listOfThirdItems.IndexOf(thirdLi) + 1;
-
-                    var elementWithText = thirdLi.FindElement(By.XPath(".//a"));
-                    if (elementWithText.Text.Length > 20) driver.JavaScriptChangeText(elementWithText, "changed");
-                    // Telecom, Media & Entertainment text is too large so selenium clicks on the <a> tag with text
-                    // to avoid this if the text is too large, it gets changed to "changed"
-
-                    thirdLi.Click();
-
-                    if (!thirdLi.GetAttribute("class").Contains("third-level-item--expanded"))
-                    {
-                        ThrowErrorAndFailTest(
-                            $"Item not clickable <ul><li>number of second level item - {indexSecond}</li>" +
-                            $"<li>number of third level item - {indexThird}</li></ul>",
-                            "Third item in side menu not clickable");
-                    }
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
-                         $"{e.StackTrace?.Replace("\n", "<br/>")}");
-            Assert.Fail(e.Message);
-        }
-    }
-
-    ///////////////////////////////////////////////////////////
-
-    public void HoverMenu(By _unorderedList)
-    {
-        try
-        {
-            var collectionOfElements = driver.FindElements(_unorderedList);
-            Actions act = new Actions(driver);
-
-            foreach (var element in collectionOfElements)
-            {
-                act.MoveToElement(element).Perform();
-                Thread.Sleep(400);
-
-                int indexOfElement = collectionOfElements.IndexOf(element);
-                if (indexOfElement == 2) continue;
-
-                if (!element.GetAttribute("class").Contains("js-opened"))
-                {
-                    ThrowErrorAndFailTest(
-                        $"Top navigation menu doesnt work, specifically list element by index {indexOfElement}",
-                        "Top navigation menu doesnt work",
-                        Status.Fatal);
-                }
-                else
-                {
-                    report.Info(
-                        $"Element by list index {indexOfElement} in unordered list works of top navigation menu works",
-                        driver.CaptureScreenshot());
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
-                         $"{e.StackTrace?.Replace("\n", "<br/>")}");
-            Assert.Fail(e.Message);
-        }
-    }
-
-    ///////////////////////////////////////////////////////////
-
-    public void ButtonSlides(By arrowsDiv)
-    {
-        try
-        {
-            var _mainDiv = driver.FindElement(arrowsDiv);
-            driver.ScrollElementIntoView(arrowsDiv);
+            var _mainDiv = driver.FindElement(_mainArrowsDiv);
+            driver.ScrollElementIntoView(_mainArrowsDiv);
 
             int maxSlides = GetNumFromString(_mainDiv.FindElement(
                 By.XPath(".//div[@class = 'slider__pagination']/span[contains(@class, 'sum-page')]")).Text);
@@ -245,7 +220,82 @@ public class Methods
             }
 
             report.Pass("<font color='green'>Left arrow works</font>", driver.CaptureScreenshot());
-            report.Pass($"<b><font color = 'green'>Arrows with div <br/> {arrowsDiv} <br/>work</font></b>");
+            report.Pass($"<b><font color = 'green'>Arrows with div <br/> {_mainArrowsDiv} <br/>work</font></b>");
+        }
+        catch (Exception e)
+        {
+            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+                         $"{e.StackTrace?.Replace("\n", "<br/>")}");
+            Assert.Fail(e.Message);
+        }
+    }
+
+
+    /// <summary>
+    /// Test of scrollable section
+    /// Example of scrollable section: https://www.epam.com/
+    /// </summary>
+    /// <param name="_mainDiv">
+    /// section should have this attribute: 'data-sticky-scroll-vertical=true'
+    /// </param>
+    public void ScrollableSection(By _mainDiv)
+    {
+        try
+        {
+            ScrollForInfographicScroll(_mainDiv);
+            report.Pass($"<font color='green'>Scroll infographic works</font>", driver.CaptureScreenshot());
+        }
+        catch (Exception e)
+        {
+            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+                         $"{e.StackTrace?.Replace("\n", "<br/>")}");
+            Assert.Fail(e.Message);
+        }
+    }
+
+
+    ///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
+
+    // Hack: following methods are currently obsolete probably because they are broken
+
+    [Obsolete]
+    public void SideMenu(By buttonSideMenuLocator, By _liSideMenuLocator)
+    {
+        try
+        {
+            var _button = driver.FindElement(buttonSideMenuLocator);
+            if (_button.GetAttribute("aria-expanded").Equals("false")) _button.Click();
+
+            var _listOfSecondItems = driver.FindElements(_liSideMenuLocator);
+            foreach (var liSecond in _listOfSecondItems)
+            {
+                int indexSecond = _listOfSecondItems.IndexOf(liSecond) + 1;
+                liSecond.Click();
+
+                var _listOfThirdItems = liSecond.FindElements(By.XPath(".//ul[@class = 'hamburger-menu__sub-list']" +
+                                                                       "/child::li[contains(@class, 'third-level-item--collapsed')]"));
+                foreach (var thirdLi in _listOfThirdItems)
+                {
+                    int indexThird = _listOfThirdItems.IndexOf(thirdLi) + 1;
+
+                    var elementWithText = thirdLi.FindElement(By.XPath(".//a"));
+                    if (elementWithText.Text.Length > 20) driver.JavaScriptChangeText(elementWithText, "changed");
+                    // Telecom, Media & Entertainment text is too large so selenium clicks on the <a> tag with text
+                    // to avoid this if the text is too large, it gets changed to "changed"
+
+                    thirdLi.Click();
+
+                    if (!thirdLi.GetAttribute("class").Contains("third-level-item--expanded"))
+                    {
+                        ThrowErrorAndFailTest(
+                            $"Item not clickable <ul><li>number of second level item - {indexSecond}</li>" +
+                            $"<li>number of third level item - {indexThird}</li></ul>",
+                            "Third item in side menu not clickable");
+                    }
+                }
+            }
         }
         catch (Exception e)
         {
@@ -257,12 +307,36 @@ public class Methods
 
     ///////////////////////////////////////////////////////////
 
-    public void ScrollableSection(By locator)
+    [Obsolete]
+    public void HoverMenu(By _unorderedList)
     {
         try
         {
-            ScrollForInfographicScroll(locator);
-            report.Pass($"<font color='green'>Scroll infographic works</font>", driver.CaptureScreenshot());
+            var collectionOfElements = driver.FindElements(_unorderedList);
+            Actions act = new Actions(driver);
+
+            foreach (var element in collectionOfElements)
+            {
+                act.MoveToElement(element).Perform();
+                Thread.Sleep(400);
+
+                int indexOfElement = collectionOfElements.IndexOf(element);
+                if (indexOfElement == 2) continue;
+
+                if (!element.GetAttribute("class").Contains("js-opened"))
+                {
+                    ThrowErrorAndFailTest(
+                        $"Top navigation menu doesnt work, specifically list element by index {indexOfElement}",
+                        "Top navigation menu doesnt work",
+                        Status.Fatal);
+                }
+                else
+                {
+                    report.Info(
+                        $"Element by list index {indexOfElement} in unordered list works of top navigation menu works",
+                        driver.CaptureScreenshot());
+                }
+            }
         }
         catch (Exception e)
         {
@@ -271,6 +345,7 @@ public class Methods
             Assert.Fail(e.Message);
         }
     }
+
 
     #endregion
 
