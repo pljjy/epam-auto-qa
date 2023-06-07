@@ -1,0 +1,9 @@
+{
+  "browser": "Chrome", 
+  "headless": true,
+  "implicit-wait": 15, // seconds
+  "system-info": {
+    "show-browser-in-system-info":  true,
+    "OS": "Windows 11"
+  }
+}
