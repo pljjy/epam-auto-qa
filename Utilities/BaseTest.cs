@@ -62,7 +62,7 @@ public class BaseTest
 
         //information that will be shown in the html report
         configs = JsonFileToDictionary(pathToJsonFile);
-        var systemInfo = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(configs["system-info"].ToString()!)!;
+        var systemInfo = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(configs["system-info"].ToString());
 
         if (systemInfo["show-browser-in-system-info"])
         {
@@ -93,7 +93,7 @@ public class BaseTest
                 break;
         }
 
-        driver = DriverFactory.GetBrowser(webEType, (int)configs["implicit-wait"], configs["headless"]);
+        driver =  DriverFactory.GetBrowser(webEType, (int)configs["implicit-wait"], configs["headless"]);
         // json returns Int64 so it should be changed to Int32 manually
     }
 
@@ -112,7 +112,7 @@ public class BaseTest
         }
         catch(Exception e)
         {
-            //Assert.Fail("Couldn't save reports\n\n" + e.Message + "\n" + e.StackTrace);
+            Assert.Fail("Couldn't save reports\n\n" + e.Message + "\n" + e.StackTrace);
         }
     }
 

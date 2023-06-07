@@ -6,7 +6,7 @@ using static Epam.TestCases.Epam.Site.Locators;
 namespace Epam.TestCases.Epam.Tests;
 
 [TestFixture]
-//[Parallelizable(ParallelScope.All)]
+[Parallelizable(ParallelScope.Self)]
 internal class SimpleInteractionsTests : BaseTest
 {
     [Test]
