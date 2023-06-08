@@ -32,7 +32,7 @@ public class BaseTest
 {
     private protected IWebDriver driver;
     private ExtentReports extent;
-    private protected ExtentTest report;
+    private protected ReportClass report;
     private protected string nameClass;
     private protected Methods tests;
     private protected Dictionary<string, dynamic> configs;
@@ -79,7 +79,7 @@ public class BaseTest
     [SetUp]
     public void StartBrowser()
     {
-        report = extent.CreateTest(TestContext.CurrentContext.Test.Name);
+        report = new ReportClass(TestContext.CurrentContext.Test.Name, extent);
         ETypeDriver webEType = ETypeDriver.Chrome;
         string browserName = Regex.Replace(configs["browser"], @"[_\s-]", "").ToLower();
 
@@ -107,8 +107,8 @@ public class BaseTest
         extent.Flush();
         try
         {
-            File.Move(String.Format(projectDir + @"\Reports\index.html"),
-                String.Format(projectDir + $@"\Reports\{DateTime.Now.ToString("yyyyMMdd_hhmm")}-{nameClass}.html"));
+            File.Move(String.Format(projectDir + @"/Reports/index.html"),
+                String.Format(projectDir + $@"/Reports/{DateTime.Now.ToString("yyyyMMdd_hhmm")}-{nameClass}.html"));
         }
         catch(Exception e)
         {

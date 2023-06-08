@@ -1,4 +1,3 @@
-- do the text test at https://www.epam.com/services/engineering/iot
 - email send test
 - make regions test(like on https://www.epam.com/)
 - do something w/ obsolete methods

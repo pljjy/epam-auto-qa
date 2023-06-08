@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using AventStack.ExtentReports;
 using Epam.Source.Extensions;
+using Epam.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -14,7 +15,7 @@ public class Methods
     #region Constructor and Variables
 
     private IWebDriver driver = null!;
-    private ExtentTest report = null!;
+    private ReportClass report = null!;
 
     /// <summary>
     /// Initializes variables, goes to the desired site and removes the cookies window
@@ -22,7 +23,7 @@ public class Methods
     /// <param name="_driver"></param>
     /// <param name="_report"></param>
     /// <param name="url"></param>
-    public Methods(IWebDriver _driver, ExtentTest _report, string url)
+    public Methods(IWebDriver _driver, ReportClass _report, string url)
     {
         try
         {
@@ -358,7 +359,7 @@ public class Methods
     void ThrowErrorAndFailTest(string reportText, string failText = "Something went wrong..",
         Status status = Status.Error)
     {
-        report.Log(status, reportText, driver.CaptureScreenshot());
+        report.log.Log(status, reportText, driver.CaptureScreenshot());
         Assert.Fail(failText);
     }
 
@@ -389,7 +390,7 @@ public class Methods
     /// <summary>
     /// Static methods
     /// </summary>
-    public static string pathToJsonFile = GetProjectDirectory() + @"\config.json";
+    public static readonly string pathToJsonFile = GetProjectDirectory() + @"/config.json";
 
     public static Dictionary<string, dynamic> JsonFileToDictionary(string _path)
     {
