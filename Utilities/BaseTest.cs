@@ -45,7 +45,7 @@ public class BaseTest
     public void OneTimeSetup()
     {
         nameClass = GetType().ToString().Substring("Epam.TestCases.".Length);
-        string reportsPath = projectDir + @"\Reports\";
+        string reportsPath = projectDir + @"/Reports/";
 
         var htmlReporter = new ExtentHtmlReporter(reportsPath)
         {
