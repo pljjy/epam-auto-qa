@@ -1,7 +1,6 @@
 - email send test
 - make regions test(like on https://www.epam.com/)
 - do something w/ obsolete methods
-- add ExtentTest extension to color different pass() options (object.Debug(), object.Fatal(), etc.)
 - add readme
 
 - api test(if it exists & public)

@@ -14,8 +14,8 @@ public class Methods
 {
     #region Constructor and Variables
 
-    private IWebDriver driver = null!;
-    private ReportClass report = null!;
+    protected IWebDriver driver = null!;
+    protected ReportClass report = null!;
 
     /// <summary>
     /// Initializes variables, goes to the desired site and removes the cookies window

@@ -2,7 +2,10 @@ using OpenQA.Selenium;
 
 namespace Epam.TestCases.Epam.Site;
 
-public static class Locators
+/// <summary>
+/// Locators for TestFixture SimpleInteractions
+/// </summary>
+public static class SimpleInteractionsLocators
 {
     public static readonly By btnSlides =
         By.XPath(
@@ -22,11 +25,9 @@ public static class Locators
         By.XPath(
             "//div[@class='content-container parsys']/div[@class='section'][3]/section/div[@class='section-ui__parallax-wrapper ']/following-sibling::div");
     // WTF: pray they don't move the div or don't delete other sections in main/.'content-container parsys'
+        
+        
 
-    // public static readonly By 
-        
-        
-        
     //HACK: this is not functioning yet and im not sure if it should
     //public static readonly By topNavigationMenuUL = By.XPath(
     //    "//nav[contains(@class, 'top-navigation')][@aria-label = 'Main navigation']/ul[@class = 'top-navigation__row']/child::li");

@@ -1,12 +1,13 @@
 ﻿using Epam.TestCases.Epam.Site;
 using Epam.Utilities;
 using NUnit.Framework;
-using static Epam.TestCases.Epam.Site.Locators;
+using static Epam.TestCases.Epam.Site.SimpleInteractionsLocators;
 
 namespace Epam.TestCases.Epam.Tests;
 
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]
+// can't make ParallelScope.All because all tests use the same driver
 internal class SimpleInteractionsTests : BaseTest
 {
     [Test]
