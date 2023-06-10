@@ -1,15 +1,14 @@
+using System.Text.RegularExpressions;
 using AventStack.ExtentReports;
 using AventStack.ExtentReports.Reporter;
+using AventStack.ExtentReports.Reporter.Configuration;
 using Epam.Source.Extensions;
 using Epam.Source.WebDriver;
+using Epam.TestCases.Epam.Site.Methods;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
-using AventStack.ExtentReports.Reporter.Configuration;
-using Epam.TestCases.Epam.Site;
-using static Epam.TestCases.Epam.Site.Methods;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 
 #pragma warning disable CS8618
 
@@ -34,7 +33,7 @@ public class BaseTest
     private ExtentReports extent;
     private protected ReportClass report;
     private protected string nameClass;
-    private protected Methods tests;
+    private protected SimpleInteractionsMethods tests;
     private protected Dictionary<string, dynamic> configs;
 
     public static string projectDir = GetProjectDirectory();
@@ -44,8 +43,14 @@ public class BaseTest
     [OneTimeSetUp]
     public void OneTimeSetup()
     {
-        nameClass = GetType().ToString().Substring("Epam.TestCases.".Length);
         string reportsPath = projectDir + @"/Reports/";
+        if (!Directory.Exists(reportsPath))
+        {
+            Directory.CreateDirectory(reportsPath);
+            // html files are ignored by git so Report folder doesn't exist when cloned 
+        }
+        
+        nameClass = GetType().ToString().Substring("Epam.TestCases.".Length);
 
         var htmlReporter = new ExtentHtmlReporter(reportsPath)
         {

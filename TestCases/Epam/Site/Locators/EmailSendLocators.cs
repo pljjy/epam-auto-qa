@@ -1,6 +1,6 @@
 ﻿using OpenQA.Selenium;
 
-namespace Epam.TestCases.Epam.Site;
+namespace Epam.TestCases.Epam.Site.Locators;
 
 /// <summary>
 /// Locators for EmailSend TestFixture
