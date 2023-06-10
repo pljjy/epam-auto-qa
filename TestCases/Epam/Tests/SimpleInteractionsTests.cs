@@ -43,4 +43,11 @@ internal class SimpleInteractionsTests : BaseTest
         tests = new SimpleInteractionsMethods(driver, report, "https://www.epam.com/services/engineering/iot");
         tests.SectionWrapper(sectionWrapper, "https://www.epam.com/services/engineering/iot");
     }
+
+    [Test]
+    public void SideMenuTest()
+    {
+        tests = new SimpleInteractionsMethods(driver, report, "https://www.epam.com/");
+        tests.SideMenu(sideMenuList);
+    }
 }

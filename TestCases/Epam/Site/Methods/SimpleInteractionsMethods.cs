@@ -204,30 +204,34 @@ public class SimpleInteractionsMethods : BaseMethod
         try
         {
             ScrollForInfographicScroll(_mainDiv);
-            report.Pass($"<font color='green'>Scroll infographic works</font>", driver.CaptureScreenshot());
+            report.Pass("Scroll infographic works", driver.CaptureScreenshot());
         }
         catch (Exception e)
         {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+            report.Error($"{e.Message}</br><b>Stack trace:</b><br/>" +
                          $"{e.StackTrace?.Replace("\n", "<br/>")}");
             Assert.Fail(e.Message);
         }
     }
 
-
-    ///////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////
-
-    // Hack: following methods are currently obsolete probably because they are broken
-
-    [Obsolete]
-    public void SideMenu(By buttonSideMenuLocator, By _liSideMenuLocator)
+    /// <summary>
+    /// Test for list of links in the side menu of the site
+    /// This menu should be at every https://epam.com/whatever
+    /// </summary>
+    /// <param name="_liSideMenuLocator">should end with /child::li</param>
+    public void SideMenu(By _liSideMenuLocator)
     {
         try
         {
-            var _button = driver.FindElement(buttonSideMenuLocator);
-            if (_button.GetAttribute("aria-expanded").Equals("false")) _button.Click();
+            var _button = driver.FindElement(By.XPath("//button[@class='hamburger-menu__button']"));
+            if (_button.GetAttribute("aria-expanded").Equals("false"))
+            {
+                _button.Click();
+                if (_button.GetAttribute("aria-expanded").Equals("false"))
+                {
+                    ThrowErrorAndFailTest("Button for the side menu is not working", "Button for the side menu is not working");
+                }
+            }
 
             var _listOfSecondItems = driver.FindElements(_liSideMenuLocator);
             foreach (var liSecond in _listOfSecondItems)
@@ -242,12 +246,11 @@ public class SimpleInteractionsMethods : BaseMethod
                     int indexThird = _listOfThirdItems.IndexOf(thirdLi) + 1;
 
                     var elementWithText = thirdLi.FindElement(By.XPath(".//a"));
-                    if (elementWithText.Text.Length > 20) driver.JavaScriptChangeText(elementWithText, "changed");
+                    if (elementWithText.Text.Length > 15) driver.JavaScriptChangeText(elementWithText, "changed");
                     // Telecom, Media & Entertainment text is too large so selenium clicks on the <a> tag with text
                     // to avoid this if the text is too large, it gets changed to "changed"
 
                     thirdLi.Click();
-
                     if (!thirdLi.GetAttribute("class").Contains("third-level-item--expanded"))
                     {
                         ThrowErrorAndFailTest(
@@ -255,47 +258,6 @@ public class SimpleInteractionsMethods : BaseMethod
                             $"<li>number of third level item - {indexThird}</li></ul>",
                             "Third item in side menu not clickable");
                     }
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
-                         $"{e.StackTrace?.Replace("\n", "<br/>")}");
-            Assert.Fail(e.Message);
-        }
-    }
-
-    ///////////////////////////////////////////////////////////
-
-    [Obsolete]
-    public void HoverMenu(By _unorderedList)
-    {
-        try
-        {
-            var collectionOfElements = driver.FindElements(_unorderedList);
-            Actions act = new Actions(driver);
-
-            foreach (var element in collectionOfElements)
-            {
-                act.MoveToElement(element).Perform();
-                Thread.Sleep(400);
-
-                int indexOfElement = collectionOfElements.IndexOf(element);
-                if (indexOfElement == 2) continue;
-
-                if (!element.GetAttribute("class").Contains("js-opened"))
-                {
-                    ThrowErrorAndFailTest(
-                        $"Top navigation menu doesnt work, specifically list element by index {indexOfElement}",
-                        "Top navigation menu doesnt work",
-                        Status.Fatal);
-                }
-                else
-                {
-                    report.Info(
-                        $"Element by list index {indexOfElement} in unordered list works of top navigation menu works",
-                        driver.CaptureScreenshot());
                 }
             }
         }

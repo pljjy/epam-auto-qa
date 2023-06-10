@@ -1,6 +1,5 @@
-- email send test
 - make regions test(like on https://www.epam.com/)
-- do something w/ obsolete methods
-- add readme
 
+things that I can't do at the moment but hopefully I will:
+- contact us test(it requires captcha and I'm not capable of bypassing it as for now)
 - api test(if it exists & public)
