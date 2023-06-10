@@ -41,7 +41,7 @@ public class BaseMethod
         }
         catch (Exception e)
         {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+            report.Error($"{e.Message} </br><b>Stack trace:</b><br/>" +
                          $"{e.StackTrace?.Replace("\n", "<br/>")}");
             Assert.Fail(e.Message);
         }

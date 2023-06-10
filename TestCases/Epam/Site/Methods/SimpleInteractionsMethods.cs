@@ -49,7 +49,7 @@ public class SimpleInteractionsMethods : BaseMethod
         }
         catch (Exception e)
         {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+            report.Error($"{e.Message}</br><b>Stack trace:</b><br/>" +
                          $"{e.StackTrace?.Replace("\n", "<br/>")}");
             Assert.Fail(e.Message);
         }
@@ -95,7 +95,7 @@ public class SimpleInteractionsMethods : BaseMethod
         }
         catch (Exception e)
         {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+            report.Error($"{e.Message}</br><b>Stack trace:</b><br/>" +
                          $"{e.StackTrace?.Replace("\n", "<br/>")}");
             Assert.Fail(e.Message);
         }
@@ -152,7 +152,7 @@ public class SimpleInteractionsMethods : BaseMethod
                 }
             }
 
-            report.Pass("<font color = 'green'>Right arrow works</font>", driver.CaptureScreenshot());
+            report.Pass("Right arrow works", driver.CaptureScreenshot());
             for (int x = maxSlides; x > 0; x--)
             {
                 leftArrow.Click();
@@ -180,12 +180,12 @@ public class SimpleInteractionsMethods : BaseMethod
                 }
             }
 
-            report.Pass("<font color='green'>Left arrow works</font>", driver.CaptureScreenshot());
-            report.Pass($"<b><font color = 'green'>Arrows with div <br/> {_mainArrowsDiv} <br/>work</font></b>");
+            report.Pass("Left arrow works", driver.CaptureScreenshot());
+            report.Pass($"<b>Arrows with div <br/> {_mainArrowsDiv} <br/>work</b>");
         }
         catch (Exception e)
         {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+            report.Error($"{e.Message} </br><b>Stack trace:</b><br/>" +
                          $"{e.StackTrace?.Replace("\n", "<br/>")}");
             Assert.Fail(e.Message);
         }
@@ -263,7 +263,7 @@ public class SimpleInteractionsMethods : BaseMethod
         }
         catch (Exception e)
         {
-            report.Error($"<font color='red'>{e.Message}</font></br><b>Stack trace:</b><br/>" +
+            report.Error($"{e.Message} </br><b>Stack trace:</b><br/>" +
                          $"{e.StackTrace?.Replace("\n", "<br/>")}");
             Assert.Fail(e.Message);
         }

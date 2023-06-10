@@ -129,16 +129,16 @@ public class BaseTest
         switch (testStatus)
         {
             case TestStatus.Passed:
-                report.Pass("<font color = 'green'>Test passed successfully<font/>");
+                report.Pass("Test passed successfully");
                 break;
             case TestStatus.Skipped:
-                report.Debug("<font color = 'grey'>Test skipped<font/>");
+                report.Debug("Test skipped");
                 break;
             case TestStatus.Warning:
-                report.Warning("<font color = 'yellow'>Test ended with a warning<font/>", driver.CaptureScreenshot());
+                report.Warning("Test ended with a warning", driver.CaptureScreenshot());
                 break;
             case TestStatus.Failed:
-                report.Error("<font color = 'red'>Test ended with an error<font/>", driver.CaptureScreenshot());
+                report.Error("Test ended with an error", driver.CaptureScreenshot());
                 break;
         }
 
