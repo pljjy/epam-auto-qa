@@ -33,7 +33,6 @@ public class BaseTest
     private ExtentReports extent;
     private protected ReportClass report;
     private protected string nameClass;
-    private protected SimpleInteractionsMethods tests;
     private protected Dictionary<string, dynamic> configs;
 
     public static string projectDir = GetProjectDirectory();

@@ -6,6 +6,8 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 
 [assembly: Parallelizable(ParallelScope.Fixtures)]
+// can't make ParallelScope.All because all tests use the same driver
+// TODO: make all tests parallel 
 namespace Epam.Utilities;
 
 /// <summary>

@@ -6,9 +6,10 @@ using static Epam.TestCases.Epam.Site.Locators.SimpleInteractionsLocators;
 namespace Epam.TestCases.Epam.Tests;
 
 [TestFixture]
-// can't make ParallelScope.All because all tests use the same driver
 internal class SimpleInteractionsTests : BaseTest
 {
+    SimpleInteractionsMethods tests = null!;
+    
     [Test]
     public void HorizontalScrollableSectionTest()
     {
